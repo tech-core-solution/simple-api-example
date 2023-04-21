@@ -6,7 +6,7 @@ from termcolor import colored
 # Create a function to connect to a database with SQLite
 class SQLite_Connector:
 
-    def __init__(self, db_name='database/bank_simulator.db') -> None:
+    def __init__(self, db_name='database/users.db') -> None:
         self.db_name = db_name
         self.connection = None
         self.cursor = None
@@ -17,7 +17,7 @@ class SQLite_Connector:
     def create_tables(self) -> None:
         
         if not self.db_exit:
-            sql_file = open("database/bank_simulator.sql")
+            sql_file = open("database/user.sql")
             sql_as_string = sql_file.read()
             self.cursor.executescript(sql_as_string)
             print(colored("[INFO] All tables Created", "blue", attrs=["bold"]))

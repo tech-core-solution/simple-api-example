@@ -30,24 +30,17 @@ class User_Controller(SQLite_Connector):
                                        error_message=Error_Message.there_not_existent_users.value)
         return Schema.api_response(status=200, data=users)
 
-    def generate_account_number(self) -> int:
-        return random.randint(1000000000, 99999999999)
+    def create_new(
+        self, first_name: str, last_name: str, email: str, user_password: str, user_type="Stander") -> list:
 
-    def create_new(self, first_name: str, last_name: str, age: int, e_mail: str,
-                   balance: float, nif: int, user_password: str, user_type="Stander") -> list:
-
-        hash_password = bcrypt.hashpw(
-            user_password.encode("utf-8"), bcrypt.gensalt())
+        # hash_password = bcrypt.hashpw(
+        #     user_password.encode("utf-8"), bcrypt.gensalt())
 
         sql_query = f"""
             INSERT INTO user (
-                first_name, last_name, age, e_mail, nif, code, user_password,
-                balance, account_number, user_type, account_state
+                first_name, last_name, email, hash_password, user_type, account_state
             ) VALUES (
-                '{first_name}', '{last_name}', {age}, '{e_mail}', {nif},
-                {random.randint(1000, 9999)
-                                }, '{hash_password.decode("utf-8")}', {balance},
-                {self.generate_account_number()}, '{user_type}', 1
+                '{first_name}', '{last_name}', '{email}', '{user_password}', '{user_type}', 1
             );
             """
 
@@ -68,10 +61,7 @@ class User_Controller(SQLite_Connector):
 
     def delete_user(self, id: int, admin_password: str) -> bool:
         user = self.get_user(id)["data"][0]
-        print(user)
-        print(bcrypt.hashpw(admin_password.encode("utf-8"), bcrypt.gensalt()))
-        
-        if bcrypt.checkpw(admin_password.encode('utf-8'), user["hash_password"].encode('utf-8')):
+        if admin_password == user["hashPassword"]:
             return Schema.api_response(
                 status=200,
                 data=self.execute_sql_query(
@@ -81,24 +71,26 @@ class User_Controller(SQLite_Connector):
 
         return Schema.api_response(
             status=503,
-            error_message=[Error_Message.admin_password_error.value],
+            error_message=[Error_Message.hash_password.value],
         )
 
-    def update_user_password(self, id: int, new_password: str) -> bool:
-        sql_query = f"""
-            UPDATE user SET user_password='{new_password}'
-            WHERE id={id}
-            """
-        try:
-            self.execute_sql_query(sql_query, Schema.user)
-        except Exception as error:
-            error_suf = f"{error}".split(".")
-            return Schema.api_response(
-                status=500,
-                error_message=[f"{get_error(error_suf[1])}"]
-            )  
-            
+    def update_user_password(self, id: int, new_password: str, old_password: str) -> bool:
+        user = self.get_user(id)["data"][0]
+        if admin_password == user["hashPassword"]:
+            sql_query = f"""
+                UPDATE user SET hash_password='{new_password}'
+                WHERE id={id}
+                """
+            try:
+                self.execute_sql_query(sql_query, Schema.user)
+            except Exception as error:
+                error_suf = f"{error}".split(".")
+                return Schema.api_response(
+                    status=500,
+                    error_message=[f"{get_error(error_suf[1])}"]
+            )
+
         return Schema.api_response(
             status=200,
             success_message=[Success_Message.password_updated.value]
-        )          
+        )
