@@ -12,7 +12,7 @@ add_new_args.add_argument("lastName", type=str,
                           required=True, help="Last name is required.")
 add_new_args.add_argument("email", type=str, required=True,
                           help="It is necessary to provide email.")
-add_new_args.add_argument("userPassword", type=str,
+add_new_args.add_argument("password", type=str,
                           required=True, help="User password is necessary.")
 
 edit_password_args = reqparse.RequestParser()
@@ -43,7 +43,7 @@ class Users(Resource):
             first_name=args["firstName"],
             last_name=args["lastName"],
             email=args["email"],
-            user_password=args["userPassword"]
+            password=args["password"]
         )
 
         return jsonify(new_user)

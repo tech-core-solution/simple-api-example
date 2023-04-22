@@ -20,8 +20,8 @@ class Schema:
         
         return {
             "status": status,
-            "successMessage": [{index+1: message} for index, message in enumerate(success_message)],
-            "errorMessage": [{index+1: error} for index, error in enumerate(error_message)],
+            "successMessage": [{"id": index+1, "message": message} for index, message in enumerate(success_message)],
+            "errorMessage": [{"id": index+1, "message": message} for index, message in enumerate(error_message)],
             "data": data
         }
  

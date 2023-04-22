@@ -32,16 +32,16 @@ class User_Controller(SQLite_Connector):
         return Schema.api_response(status=200, data=users)
 
     def create_new(
-            self, first_name: str, last_name: str, email: str, user_password: str, user_type="Stander") -> list:
+            self, first_name: str, last_name: str, email: str, password: str, user_type="Stander") -> list:
 
         # hash_password = bcrypt.hashpw(
-        #     user_password.encode("utf-8"), bcrypt.gensalt())
+        #     password.encode("utf-8"), bcrypt.gensalt())
 
         sql_query = f"""
             INSERT INTO user (
                 first_name, last_name, email, hash_password, user_type, account_state
             ) VALUES (
-                '{first_name}', '{last_name}', '{email}', '{user_password}', '{user_type}', 1
+                '{first_name}', '{last_name}', '{email}', '{password}', '{user_type}', 1
             );
             """
 
@@ -54,11 +54,7 @@ class User_Controller(SQLite_Connector):
                 error_message=[f"{get_error(error_suf[1])}"]
             )
 
-        return Schema.api_response(
-            status=200,
-            data=self.get_user()["data"][-1],
-            success_message=[Success_Message.new_user.value]
-        )
+        return self.auth_user(email=email, password=password)
 
     def delete_user(self, id: int, admin_password: str) -> bool:
         user = self.get_user(id)["data"][0]
@@ -113,15 +109,21 @@ class User_Controller(SQLite_Connector):
     def auth_user (self, email: str, password: str) -> list:
         users = self.execute_sql_query(f"SELECT * FROM user WHERE email LIKE '%{email}%'", Schema.user)
         user_exist = len(users) > 0
-        if(user_exist and users[0]["hashPassword"] == password):
-            access_token = secrets.token_hex(40)
-            self.save_access_token(users[0]["id"], access_token)
+        if(user_exist):
+            if(users[0]["hashPassword"] == password):
+                access_token = secrets.token_hex(40)
+                self.save_access_token(users[0]["id"], access_token)
 
-            return Schema.api_response(
-                status=200,
-                error_message=[Success_Message.auth_user.value],
-                data={"accessToken": access_token, "userName": users[0]["firstName"]}
-            )
+                return Schema.api_response(
+                    status=200,
+                    success_message=[Success_Message.auth_user.value],
+                    data={"accessToken": access_token, "userName": users[0]["firstName"]}
+                )
+            else:
+                return Schema.api_response(
+                    status=400,
+                    error_message=[Error_Message.hash_password.value]
+                )
 
         else:
             return Schema.api_response(
