@@ -4,6 +4,7 @@ from flask_restful import Api, Resource, reqparse
 
 from routes.user import Users
 from routes.user import User
+from routes.auth import Auth_User
 
 
 app = Flask(__name__)
@@ -23,6 +24,7 @@ class Bank_Simulator_Restfull_API():
         api.add_resource(Simple_User_API, "/")
         api.add_resource(Users, "/users")
         api.add_resource(User, "/user/<int:id>")
+        api.add_resource(Auth_User, "/sign-in")
         app.run(debug=True)
 
 

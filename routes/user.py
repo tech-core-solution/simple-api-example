@@ -57,9 +57,10 @@ class User(Resource):
     def put(self, id):
         args = edit_password_args.parse_args()
 
-        return jsonify(user_controller.update_user_password(id, args["newPassword"]), args["oldPassword"])
+        return jsonify(user_controller.update_user_password(
+            id=id, new_password=args["newPassword"], old_password=args["oldPassword"]))
 
     def delete(self, id):
 
-        args = user_delete_arg.parse_args()
+        args=user_delete_arg.parse_args()
         return jsonify(user_controller.delete_user(id, args["password"]))

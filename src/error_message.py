@@ -4,11 +4,12 @@ class Error_Message(Enum):
     
     id_not_exist = "This user ID doesn't exist"
     user_not_exist = "This user doesn't exist"
-    there_not_existent_users = "There is no registred users on this app"
+    there_not_existent_users = "There is no registered users on this app"
     email_already_exist = "This email address is already in use"
     equal_password = "Old and New password are the both the same"
     hash_password = "Wrong user password"
     internal_error = "Server internal Error"
+    access_token_not_valid = "Access Token is not valid"
 
 
 def get_error(error_suf: str) -> str:
