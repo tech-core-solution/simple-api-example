@@ -32,17 +32,14 @@ class User_Controller(SQLite_Connector):
         return Schema.api_response(status=200, data=users)
 
     def create_new(
-            self, first_name: str, last_name: str, email: str, password: str, user_type="Stander") -> list:
+            self, first_name: str, last_name: str, email: str, password: str) -> list:
 
         # hash_password = bcrypt.hashpw(
         #     password.encode("utf-8"), bcrypt.gensalt())
 
         sql_query = f"""
-            INSERT INTO user (
-                first_name, last_name, email, hash_password, user_type, account_state
-            ) VALUES (
-                '{first_name}', '{last_name}', '{email}', '{password}', '{user_type}', 1
-            );
+            INSERT INTO user (first_name, last_name, email, hash_password) 
+            VALUES ('{first_name}', '{last_name}', '{email}', '{password}');
             """
 
         try:

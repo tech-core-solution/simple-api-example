@@ -1,9 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Api, Resource
 
-from routes.user import Users
-from routes.user import User
+from routes.user import User, Users
+from routes.todo import Todo, Todos
 from routes.auth import Auth_User
 
 
@@ -24,6 +24,8 @@ class Bank_Simulator_Restfull_API():
         api.add_resource(Simple_User_API, "/")
         api.add_resource(Users, "/users")
         api.add_resource(User, "/user/<int:id>")
+        api.add_resource(Todos, "/todos")
+        api.add_resource(Todo, "/todo/<id>")
         api.add_resource(Auth_User, "/sign-in")
         app.run(debug=True)
 

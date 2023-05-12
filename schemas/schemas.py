@@ -9,10 +9,18 @@ class Schema:
                 "id": dt[0],
                 "firstName": dt[1],
                 "lastName": dt[2],
-                "email": dt[3],
-                "hashPassword": dt[4],
-                "userType": dt[5],
-                "accountState": dt[6]
+                "email": dt[3]
+            } for dt in data]
+        
+    @staticmethod
+    def todo(data: tuple) -> list:
+        
+        return [
+            {
+                "id": dt[0],
+                "userId": dt[1],
+                "title": dt[2],
+                "todoDescription": dt[3]
             } for dt in data]
     
     @staticmethod
